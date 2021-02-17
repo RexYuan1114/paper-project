@@ -1,4 +1,4 @@
-let json = {
+const json = {
   // 路网信息
   nodes: [
     {
@@ -962,3 +962,38 @@ let json = {
   ],
   categories: [{ name: '住宅区' }, { name: '商业区' }],
 };
+
+function countDis(a, b) {
+  return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5;
+}
+
+json.nodeMap = {};
+
+json.nodes.forEach((node) => {
+  json.nodeMap[node.id] = node;
+});
+
+json.nodes.forEach((node) => {
+  json.links.forEach((link) => {
+    if (link.target === node.id) {
+      if (!node.link) node.link = {};
+      node.link[link.source] = countDis(json.nodeMap[link.source], node);
+    } else if (link.source === node.id) {
+      if (!node.link) node.link = {};
+      node.link[link.target] = countDis(json.nodeMap[link.target], node);
+    }
+  });
+});
+
+const jsonNodesProxy = new Proxy(json.nodeMap, {
+  get: (target, p, receiver) => {
+    return {
+      ...target?.[p],
+      ...target?.[p]?.link,
+    };
+  },
+});
+
+json.nodeMap = jsonNodesProxy;
+
+export default json;

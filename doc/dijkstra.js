@@ -1,53 +1,27 @@
-// function Dijkstra(Graph, source){
-//     const distMap = new Map();
-//     // create vertex set Q
-//     for(let i = 0;i< graph.length;i++){
-
-//     }
-//     for each vertex v in Graph:             // Initialization
-//         dist[v] ← INFINITY                  // Unknown distance from source to v
-//         prev[v] ← UNDEFINED                 // Previous node in optimal path from source
-//         add v to Q                          // All nodes initially in Q (unvisited nodes)
-
-//     dist[source] ← 0                        // Distance from source to source
-
-//     while Q is not empty:
-//         u ← vertex in Q with min dist[u]    // Source node will be selected first
-//       remove u from Q
-
-//        for each neighbor v of u:           // where v is still in Q.
-//            alt ← dist[u] + length(u, v)
-//            if alt < dist[v]:               // A shorter path to v has been found
-//                dist[v] ← alt
-//                 prev[v] ← u
-
-//     return dist[], prev[]
-//   }
-
 const Graph = (function (undefined) {
-  var extractKeys = function (obj) {
-    var keys = [],
-      key;
+  const extractKeys = function (obj) {
+    const keys = [];
+    let key;
     for (key in obj) {
       Object.prototype.hasOwnProperty.call(obj, key) && keys.push(key);
     }
     return keys;
   };
 
-  var sorter = function (a, b) {
+  const sorter = function (a, b) {
     return parseFloat(a) - parseFloat(b);
   };
 
-  var findPaths = function (map, start, end, infinity) {
+  const findPaths = function (map, start, end, infinity) {
     infinity = infinity || Infinity;
 
-    var costs = {},
-      open = { 0: [start] },
-      predecessors = {},
-      keys;
+    const costs = {};
+    const open = { 0: [start] };
+    const predecessors = {};
+    let keys;
 
-    var addToOpen = function (cost, vertex) {
-      var key = '' + cost;
+    const addToOpen = function (cost, vertex) {
+      const key = `${cost}`;
       if (!open[key]) open[key] = [];
       open[key].push(vertex);
     };
@@ -59,19 +33,19 @@ const Graph = (function (undefined) {
 
       keys.sort(sorter);
 
-      var key = keys[0],
-        bucket = open[key],
-        node = bucket.shift(),
-        currentCost = parseFloat(key),
-        adjacentNodes = map[node] || {};
+      const key = keys[0];
+      const bucket = open[key];
+      const node = bucket.shift();
+      const currentCost = parseFloat(key);
+      const adjacentNodes = map[node] || {};
 
       if (!bucket.length) delete open[key];
 
-      for (var vertex in adjacentNodes) {
+      for (const vertex in adjacentNodes) {
         if (Object.prototype.hasOwnProperty.call(adjacentNodes, vertex)) {
-          var cost = adjacentNodes[vertex],
-            totalCost = cost + currentCost,
-            vertexCost = costs[vertex];
+          const cost = adjacentNodes[vertex];
+          const totalCost = cost + currentCost;
+          const vertexCost = costs[vertex];
 
           if (vertexCost === undefined || vertexCost > totalCost) {
             costs[vertex] = totalCost;
@@ -84,14 +58,13 @@ const Graph = (function (undefined) {
 
     if (costs[end] === undefined) {
       return null;
-    } else {
-      return predecessors;
     }
+    return predecessors;
   };
 
-  var extractShortest = function (predecessors, end) {
-    var nodes = [],
-      u = end;
+  const extractShortest = function (predecessors, end) {
+    const nodes = [];
+    let u = end;
 
     while (u !== undefined) {
       nodes.push(u);
@@ -102,12 +75,12 @@ const Graph = (function (undefined) {
     return nodes;
   };
 
-  var findShortestPath = function (map, nodes) {
-    var start = nodes.shift(),
-      end,
-      predecessors,
-      path = [],
-      shortest;
+  const findShortestPath = (map, nodes) => {
+    let start = nodes.shift();
+    let end;
+    let predecessors;
+    const path = [];
+    let shortest;
 
     while (nodes.length) {
       end = nodes.shift();
@@ -116,7 +89,7 @@ const Graph = (function (undefined) {
       if (predecessors) {
         shortest = extractShortest(predecessors, end);
         if (nodes.length) {
-          path.push.apply(path, shortest.slice(0, -1));
+          path.push(...shortest.slice(0, -1));
         } else {
           return path.concat(shortest);
         }
@@ -128,53 +101,43 @@ const Graph = (function (undefined) {
     }
   };
 
-  var toArray = function (list, offset) {
+  const toArray = function (list, offset) {
     try {
       return Array.prototype.slice.call(list, offset);
     } catch (e) {
-      var a = [];
-      for (var i = offset || 0, l = list.length; i < l; ++i) {
+      const a = [];
+      for (let i = offset || 0, l = list.length; i < l; i += 1) {
         a.push(list[i]);
       }
       return a;
     }
   };
 
-  var Graph = function (map) {
+  const Graph = function (map) {
     this.map = map;
   };
 
   Graph.prototype.findShortestPath = function (start, end) {
     if (Object.prototype.toString.call(start) === '[object Array]') {
       return findShortestPath(this.map, start);
-    } else if (arguments.length === 2) {
-      return findShortestPath(this.map, [start, end]);
-    } else {
-      return findShortestPath(this.map, toArray(arguments));
     }
+    if (arguments.length === 2) {
+      return findShortestPath(this.map, [start, end]);
+    }
+    return findShortestPath(this.map, toArray(arguments));
   };
 
   Graph.findShortestPath = function (map, start, end) {
     if (Object.prototype.toString.call(start) === '[object Array]') {
       return findShortestPath(map, start);
-    } else if (arguments.length === 3) {
-      return findShortestPath(map, [start, end]);
-    } else {
-      return findShortestPath(map, toArray(arguments, 1));
     }
+    if (arguments.length === 3) {
+      return findShortestPath(map, [start, end]);
+    }
+    return findShortestPath(map, toArray(arguments, 1));
   };
 
   return Graph;
 })();
 
-var map = {a:{b:3,c:1},b:{a:2,c:1},c:{a:4,b:1}},
-    graph = new Graph(map);
-console.log(
-graph.findShortestPath('a', 'b'),      // => ['a', 'c', 'b']
-graph.findShortestPath('a', 'c'),      // => ['a', 'c']
-graph.findShortestPath('b', 'a'),      // => ['b', 'a']
-graph.findShortestPath('b', 'c', 'b'), // => ['b', 'c', 'b']
-graph.findShortestPath('c', 'a', 'b'), // => ['c', 'b', 'a', 'c', 'b']
-graph.findShortestPath('c', 'b', 'a'), // => ['c', 'b', 'a']
-)
-// export default Graph;
+export default Graph;

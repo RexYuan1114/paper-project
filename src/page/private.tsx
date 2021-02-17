@@ -1,3 +1,7 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-plusplus */
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable global-require */
 import React, { useState } from 'react';
 import DataSet from '@antv/data-set';
 import { Chart, Line, Point, Tooltip, Legend, Axis, Interval } from 'bizcharts';
@@ -96,7 +100,7 @@ function Demo() {
   //     as: 'percent',
   //   });
   return (
-    <div style={{ height: 800, width: '100vw' }}>
+    <div style={{ height: 800, width: '100%' }}>
       <Chart
         scale={scale}
         padding={[30, 20, 60, 40]}

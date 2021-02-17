@@ -55,6 +55,11 @@ module.exports = (api) => {
       require('@babel/plugin-syntax-import-meta'),
       [require('@babel/plugin-proposal-class-properties'), { loose: true }],
       require('@babel/plugin-proposal-json-strings'),
+      [
+        'import',
+        { libraryName: 'antd', libraryDirectory: 'es', style: 'css' },
+        'ant',
+      ],
 
       ...(development ? developmentPlugins : productionPlugins),
     ],
