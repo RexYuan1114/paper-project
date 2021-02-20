@@ -4839,7 +4839,7 @@ ecc-jsbn@~0.1.1:
 
 echarts-for-react@^3.0.0:
   version "3.0.0"
-  resolved "https://registry.npm.taobao.org/echarts-for-react/download/echarts-for-react-3.0.0.tgz?cache=0&sync_timestamp=1613702384405&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fecharts-for-react%2Fdownload%2Fecharts-for-react-3.0.0.tgz#af6a24e8386aa22c545a9b4ab44c8ecdd2ee491c"
+  resolved "http://222.222.216.74:20000/echarts-for-react/-/echarts-for-react-3.0.0.tgz#af6a24e8386aa22c545a9b4ab44c8ecdd2ee491c"
   integrity sha1-r2ok6DhqoixUWptKtEyOzdLuSRw=
   dependencies:
     fast-deep-equal "^3.1.3"

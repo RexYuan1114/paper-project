@@ -1,4 +1,7 @@
-const Graph = (function (undefined) {
+/* eslint-disable guard-for-in */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable no-restricted-syntax */
+const Graph = (function () {
   const extractKeys = function (obj) {
     const keys = [];
     let key;

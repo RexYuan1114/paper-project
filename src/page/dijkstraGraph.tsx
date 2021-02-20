@@ -1,8 +1,16 @@
+/* eslint-disable @typescript-eslint/no-loop-func */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
 import React from 'react';
+import ReactECharts from 'echarts-for-react';
+import { Button } from 'antd';
 import Graph from '../../doc/dijkstra';
 import roadNet from '../../doc/roadNetData';
+import option from './3dchartsOption';
+
+// render echarts option.
+/* <ReactECharts option={this.getOption()} />; */
 
 const SOC_S_P_MAP = [2.3, 9.3, 15.3, 17.5, 16.5, 14.2, 9.7, 7.5, 4, 3.7];
 const SOC_E_P_MAP = [0, 0.1, 2, 2.2, 5.5, 7.1, 9, 17.5, 27.8, 28];
@@ -42,49 +50,88 @@ function generateSocE(SOC_S: number) {
 }
 
 // 抽取目的地
-function generateDestination(POS: any) {
-  const randomNum = Math.random();
-  const posNode = roadNet[POS];
+function generatePOSS() {
+  // console.log(posNode, TIME);
+  const randomNum1 =
+    Math.random() * (roadNet.areaInfo[0].count + roadNet.areaInfo[1].count);
+  const randomNum2 = randomNum1 - roadNet.areaInfo[0].count;
+  return (
+    roadNet.areaInfo[0].nodes.find(
+      (node: any) => node.from <= randomNum1 && node.to >= randomNum1
+    ) ||
+    roadNet.areaInfo[1].nodes.find(
+      (node: any) => node.from <= randomNum2 && node.to >= randomNum2
+    )
+  );
+}
+// 抽取目的地
+function generateDestination(posNode: any, TIME?: any) {
+  // console.log(posNode, TIME);
+  const randomNum1 = Math.random();
+  let randomNum2 = Math.random();
   // 确定节点类型为 住宅区 还是 商业区
-  const nodeType = posNode.category;
-
-  return '0';
+  let nodeType = posNode.category;
+  // 如果 随机数 小于等于 同区常数, 则计算前往异区某节点的概率
+  if (randomNum1 <= roadNet.areaInfo[nodeType].case) {
+    nodeType = Number(!nodeType);
+  }
+  randomNum2 *= roadNet.areaInfo[nodeType].count;
+  return roadNet.areaInfo[nodeType].nodes.find(
+    (node: any) => node.from <= randomNum2 && node.to >= randomNum2
+  );
 }
 
-function computeData() {
-  const simpleSize = 1000;
+function getUseTime(v: any, from: any, to: any, time: any) {
+  return from.link[to.id] / v;
+}
+
+async function computeData() {
+  const simpleSize = 100;
 
   const V_ORIGIN = 80;
   const V_EMPTY = 20;
   const W = 60;
   const P = 40;
 
-  const SOC_S_Array = new Array(simpleSize).map(() => generateSocSArray());
+  const SOC_S_Array = new Array(simpleSize)
+    .fill(0)
+    .map(() => generateSocSArray());
   // const SOC_E_Array = new Array(simpleSize).map(()=>generateSocE_ARRAY())
-  const TIME_START_Array = new Array(simpleSize);
+  const TIME_START_Array = new Array(simpleSize).fill(0);
   const data: { year: string; p: any; time: number }[] = [];
   const use_time_arr_pos: any = {};
+  const SOC_S_ARRAY_T: number[] = [];
   // 抽取10000个随机起始时间, 对每一个随机起始时间进行模拟
   TIME_START_Array.forEach((xxx: number, index: number) => {
     let time = 0;
-    let POS_CUR = '0';
+    let POS_CUR = generatePOSS().id;
     let CUR_NODE = roadNet.nodes[POS_CUR];
+    // console.log('起始节点', CUR_NODE, POS_CUR);
     let C_FLAG = false;
     // 随机抽取起始电量
     const SOC_SC = SOC_S_Array[index];
     let SOC_CUR = generateSocE(SOC_SC);
+    SOC_S_ARRAY_T.push(SOC_CUR / 0.175);
     while (time < 24) {
       // 接客概率 与所在位置以及时间点有关
       let isLoad = Math.random() > 0.5;
       if (isLoad) {
         // 接客, 抽取目的地
-        // todo: 根据od数据概率抽取目的地
-        const destination = '1';
+        // 根据od数据概率抽取目的地
+        // console.log('当前节点', CUR_NODE, POS_CUR);
+        const destination = generateDestination(CUR_NODE).id;
         // 计算电量消耗
         const path = graph.findShortestPath(POS_CUR, destination) || [];
         const distancePath = [];
+        let timeInt = 0;
         const distance = path.reduce((pre, cur, subIndex) => {
           if (subIndex < path.length - 1) {
+            timeInt += getUseTime(
+              V_ORIGIN,
+              roadNet.nodes?.[Number(cur)],
+              roadNet.nodes?.[Number(path[subIndex + 1])],
+              time + timeInt
+            );
             distancePath.push({
               distance:
                 roadNet.nodes?.[Number(cur)]?.link?.[path[subIndex + 1]],
@@ -107,8 +154,9 @@ function computeData() {
           SOC_CUR -= distanceCost;
           POS_CUR = destination;
           CUR_NODE = roadNet.nodes[POS_CUR];
-          // todo : 计算时间
-          time += 2;
+          // console.log('当前节点', CUR_NODE, POS_CUR);
+          // todo : 计算通行时间
+          time += timeInt;
         }
       }
       if (!isLoad) {
@@ -119,17 +167,32 @@ function computeData() {
           // 前往下一个节点
           // 抽取目的地, 从路网关系中抽取
           // todo: 根据路网关系抽取下一节点
-          POS_CUR = '2';
-          C_FLAG = true;
+          const arrTemp = Object.keys(CUR_NODE.link);
+          const POS_CUR_TEMP =
+            arrTemp[Math.floor(Math.random() * arrTemp.length)];
+          const distance = CUR_NODE.link[POS_CUR_TEMP];
+          const distanceCost = distance * 0.175;
+          if (SOC_CUR > distanceCost) {
+            // 更新剩余电量
+            SOC_CUR -= distanceCost;
+            time += distance / V_EMPTY;
+            POS_CUR = POS_CUR_TEMP;
+            CUR_NODE = roadNet.nodes[POS_CUR];
+            // console.log('当前节点', CUR_NODE, POS_CUR);
+          } else {
+            // 电量不足, 去充电
+            C_FLAG = true;
+          }
         } else {
           // 停留在当前节点
           // 空载15分钟
           time += 0.25;
-          const distanceCost = V_EMPTY * 0.25;
+          const distanceCost = V_EMPTY * 0.25 * 0.175;
           // 更新剩余电量
           SOC_CUR -= distanceCost;
         }
       }
+      // console.log(time, SOC_CUR);
       if (SOC_CUR < SOC_SC || C_FLAG) {
         // 如果当前电量低于应充电电量, 则就地充电
         // 随机抽取充电结束电量
@@ -156,6 +219,11 @@ function computeData() {
       }
     }
   });
+  const res = [];
+  for (let i = 0; i < roadNet.nodes.length; i += 1) {
+    use_time_arr_pos[i] = data
+  }
+  console.log('result: ', use_time_arr_pos, SOC_S_ARRAY_T, SOC_S_Array);
   // 以上可得各节点24小时负荷情况即时空负荷分布图
 
   // console.timeEnd('useTime');
@@ -174,10 +242,15 @@ function computeData() {
 }
 
 export default function Dijkstra() {
-  console.log(
-    roadNet,
-    graph,
-    graph.findShortestPath('0', '50', '60') // => ['a', 'c', 'b']
+  function aaa() {
+    console.log(roadNet);
+    return new Promise((resolve) => {
+      computeData().then(() => resolve());
+    });
+  }
+  return (
+    <div>
+      <Button onClick={aaa}>计算</Button>
+    </div>
   );
-  return <div>1</div>;
 }

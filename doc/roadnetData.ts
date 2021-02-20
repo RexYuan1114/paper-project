@@ -1,4 +1,4 @@
-const json: any = {
+const json: { [props: string]: any } = {
   // 路网信息
   nodes: [
     {
@@ -967,7 +967,7 @@ function countDis(
   a: { x: number; y: number },
   b: { x: number; y: number } & any
 ) {
-  return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5;
+  return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5 / 20;
 }
 
 json.nodeMap = {};
@@ -1007,10 +1007,26 @@ json.posPMap = json.nodes.map((node: { value: number }) => {
 json.nodeMap = jsonNodesProxy;
 
 json.areaInfo = [];
-json.nodes.forEach((nodes: any) => {
-  if (!json.areaInfo[nodes.category] === undefined)
-    json.areaInfo[nodes.category] = 0;
-  json.areaInfo[nodes.category] += nodes.value;
+json.nodes.forEach((node: any) => {
+  if (json.areaInfo[node.category] === undefined)
+    json.areaInfo[node.category] = {
+      count: 0,
+      nodes: [],
+    };
+  json.areaInfo[node.category].nodes.push({
+    id: node.id,
+    from: json.areaInfo[node.category].count,
+    to: json.areaInfo[node.category].count + node.value,
+  });
+  json.areaInfo[node.category].count += node.value;
 });
+
+json.areaInfo[0].case =
+  json.areaInfo[1].count /
+  (json.areaInfo[0].count / 3 + json.areaInfo[1].count);
+
+json.areaInfo[1].case =
+  json.areaInfo[0].count /
+  (json.areaInfo[1].count / 3 + json.areaInfo[0].count);
 
 export default json;
