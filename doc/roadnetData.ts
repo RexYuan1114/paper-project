@@ -1,4 +1,4 @@
-const json = {
+const json: any = {
   // 路网信息
   nodes: [
     {
@@ -963,26 +963,32 @@ const json = {
   categories: [{ name: '住宅区' }, { name: '商业区' }],
 };
 
-function countDis(a, b) {
+function countDis(
+  a: { x: number; y: number },
+  b: { x: number; y: number } & any
+) {
   return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5;
 }
 
 json.nodeMap = {};
-
-json.nodes.forEach((node) => {
+let totalCount = 0;
+json.nodes.forEach((node: { id: string | number; value: number }) => {
   json.nodeMap[node.id] = node;
+  totalCount += node.value;
 });
 
-json.nodes.forEach((node) => {
-  json.links.forEach((link) => {
-    if (link.target === node.id) {
-      if (!node.link) node.link = {};
-      node.link[link.source] = countDis(json.nodeMap[link.source], node);
-    } else if (link.source === node.id) {
-      if (!node.link) node.link = {};
-      node.link[link.target] = countDis(json.nodeMap[link.target], node);
+json.nodes.forEach((node: { id: any; link: { [x: string]: number } }) => {
+  json.links.forEach(
+    (link: { target: string | number; source: string | number }) => {
+      if (link.target === node.id) {
+        if (!node.link) node.link = {};
+        node.link[link.source] = countDis(json.nodeMap[link.source], node);
+      } else if (link.source === node.id) {
+        if (!node.link) node.link = {};
+        node.link[link.target] = countDis(json.nodeMap[link.target], node);
+      }
     }
-  });
+  );
 });
 
 const jsonNodesProxy = new Proxy(json.nodeMap, {
@@ -994,6 +1000,17 @@ const jsonNodesProxy = new Proxy(json.nodeMap, {
   },
 });
 
+json.posPMap = json.nodes.map((node: { value: number }) => {
+  return node.value / totalCount;
+});
+
 json.nodeMap = jsonNodesProxy;
+
+json.areaInfo = [];
+json.nodes.forEach((nodes: any) => {
+  if (!json.areaInfo[nodes.category] === undefined)
+    json.areaInfo[nodes.category] = 0;
+  json.areaInfo[nodes.category] += nodes.value;
+});
 
 export default json;

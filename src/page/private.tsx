@@ -32,19 +32,26 @@ function computeData() {
   const use_time_arr = new Array(24).fill(0);
   const P = 4;
   console.time('useTime');
+  // 抽取10000个随机起始时间, 对每一个随机起始时间进行模拟
   TIME_START_Array.slice(0, 10000).forEach(
     (TIME_START: number, index: number) => {
+      // 随机抽取起始电量
       const SOC_S = SOC_S_Array[index];
       const SOC_E_ES_Array = SOC_E_Array.slice(
         SOC_E_Array.findIndex((item: any) => item >= SOC_S)
       );
+      // 随机抽取充电结束电量
       const SOC_E =
         SOC_E_ES_Array[Math.floor(SOC_E_ES_Array.length * Math.random())];
       if (!SOC_E) return;
+      // 随机抽取电动车电量
       const W = Math.random() < 0.75 ? 60 : 16;
+      // 计算充电消耗时间
       const USE_TIME = (W * (SOC_E - SOC_S)) / P / 100;
+      // 计算充电结束时间
       const TIME_END = Math.ceil(TIME_START + USE_TIME);
       const st = Math.floor(TIME_START);
+      // 将充电时间段累加到24小时数组
       for (let i = st >= 0 ? st : 23; i <= TIME_END; i++) {
         if (i > 23) {
           use_time_map.set(i - 24, (use_time_map.get(i - 24) || 0) + 1);
