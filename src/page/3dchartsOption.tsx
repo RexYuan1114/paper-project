@@ -1,14 +1,13 @@
 import roadNet from '../../doc/roadnetData';
 
-const hours = new Array(24).map((item, index) => {
+const hours = new Array(24).fill(1).map((item, index) => {
   return `${index >= 10 ? index : `0${index}`}:00`;
 });
 const days = roadNet.nodes.map((node: any) => node.id);
-
 const option = (data: any) => ({
   tooltip: {},
   visualMap: {
-    max: 20,
+    max: data[1],
     inRange: {
       color: [
         '#313695',
@@ -39,7 +38,7 @@ const option = (data: any) => ({
   },
   grid3D: {
     boxWidth: 200,
-    boxDepth: 80,
+    boxDepth: 450,
     light: {
       main: {
         intensity: 1.2,
@@ -52,7 +51,7 @@ const option = (data: any) => ({
   series: [
     {
       type: 'bar3D',
-      data: data.map(function (item: any) {
+      data: data[0].map(function (item: any) {
         return {
           value: [item[1], item[0], item[2]],
         };
@@ -66,7 +65,7 @@ const option = (data: any) => ({
       },
 
       itemStyle: {
-        opacity: 0.4,
+        opacity: 0.7,
       },
 
       emphasis: {

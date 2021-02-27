@@ -3575,6 +3575,11 @@ classnames@2.x, classnames@^2.2.1, classnames@^2.2.3, classnames@^2.2.5, classna
   resolved "https://registry.npm.taobao.org/classnames/download/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha1-Q5Nb/90pHzJtrQogUwmzjQD2UM4=
 
+claygl@^1.2.1:
+  version "1.3.0"
+  resolved "https://registry.npm.taobao.org/claygl/download/claygl-1.3.0.tgz#7a6e2903210519ac358848f5d78070ed211685f3"
+  integrity sha1-em4pAyEFGaw1iEj114Bw7SEWhfM=
+
 clean-stack@^2.0.0:
   version "2.2.0"
   resolved "https://registry.npm.taobao.org/clean-stack/download/clean-stack-2.2.0.tgz#ee8472dbb129e727b31e8a10a427dee9dfe4008b"
@@ -4839,11 +4844,27 @@ ecc-jsbn@~0.1.1:
 
 echarts-for-react@^3.0.0:
   version "3.0.0"
-  resolved "http://222.222.216.74:20000/echarts-for-react/-/echarts-for-react-3.0.0.tgz#af6a24e8386aa22c545a9b4ab44c8ecdd2ee491c"
+  resolved "https://registry.npm.taobao.org/echarts-for-react/download/echarts-for-react-3.0.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fecharts-for-react%2Fdownload%2Fecharts-for-react-3.0.0.tgz#af6a24e8386aa22c545a9b4ab44c8ecdd2ee491c"
   integrity sha1-r2ok6DhqoixUWptKtEyOzdLuSRw=
   dependencies:
     fast-deep-equal "^3.1.3"
     size-sensor "^1.0.1"
+
+echarts-gl@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.npm.taobao.org/echarts-gl/download/echarts-gl-2.0.2.tgz#c09058bc3ba7ba214a8defcfd3ca1ea06078ad31"
+  integrity sha1-wJBYvDunuiFKje/P08oeoGB4rTE=
+  dependencies:
+    claygl "^1.2.1"
+    zrender "^5.0.3"
+
+echarts@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.npm.taobao.org/echarts/download/echarts-5.0.2.tgz#1726d17a57cf05d62cd0567b4325e1201a56baf6"
+  integrity sha1-FybRelfPBdYs0FZ7QyXhIBpWuvY=
+  dependencies:
+    tslib "2.0.3"
+    zrender "5.0.4"
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -12246,6 +12267,11 @@ tsconfig-paths@^3.9.0:
     minimist "^1.2.0"
     strip-bom "^3.0.0"
 
+tslib@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.npm.taobao.org/tslib/download/tslib-2.0.3.tgz?cache=0&sync_timestamp=1609887785854&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftslib%2Fdownload%2Ftslib-2.0.3.tgz#8e0741ac45fc0c226e58a17bfc3e64b9bc6ca61c"
+  integrity sha1-jgdBrEX8DCJuWKF7/D5kubxsphw=
+
 tslib@^1.10.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.14.1"
   resolved "https://registry.npm.taobao.org/tslib/download/tslib-1.14.1.tgz?cache=0&sync_timestamp=1609887438976&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftslib%2Fdownload%2Ftslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
@@ -13109,3 +13135,10 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npm.taobao.org/yocto-queue/download/yocto-queue-0.1.0.tgz?cache=0&sync_timestamp=1606290469373&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fyocto-queue%2Fdownload%2Fyocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha1-ApTrPe4FAo0x7hpfosVWpqrxChs=
+
+zrender@5.0.4, zrender@^5.0.3:
+  version "5.0.4"
+  resolved "https://registry.npm.taobao.org/zrender/download/zrender-5.0.4.tgz#89c355af908b9f64a301b38f751b7951f2c8a95a"
+  integrity sha1-icNVr5CLn2SjAbOPdRt5UfLIqVo=
+  dependencies:
+    tslib "2.0.3"

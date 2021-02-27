@@ -2,8 +2,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
-import React from 'react';
+import React, { useState } from 'react';
 import ReactECharts from 'echarts-for-react';
+import 'echarts-gl';
 import { Button } from 'antd';
 import Graph from '../../doc/dijkstra';
 import roadNet from '../../doc/roadNetData';
@@ -85,9 +86,7 @@ function getUseTime(v: any, from: any, to: any, time: any) {
   return from.link[to.id] / v;
 }
 
-async function computeData() {
-  const simpleSize = 100;
-
+function computeData(simpleSize: number) {
   const V_ORIGIN = 80;
   const V_EMPTY = 20;
   const W = 60;
@@ -220,37 +219,35 @@ async function computeData() {
     }
   });
   const res = [];
+  let max = 0;
   for (let i = 0; i < roadNet.nodes.length; i += 1) {
-    use_time_arr_pos[i] = data
+    res.push(
+      ...use_time_arr_pos[i].map((item: any, index: any) => {
+        if (item > max) max = item;
+        return [i, index, item];
+      })
+    );
   }
-  console.log('result: ', use_time_arr_pos, SOC_S_ARRAY_T, SOC_S_Array);
-  // 以上可得各节点24小时负荷情况即时空负荷分布图
+  console.log('result: ', res);
+  console.timeEnd('excute');
+  return [res, max];
+}
 
-  // console.timeEnd('useTime');
-  // console.log(use_time_arr);
-  // use_time_arr.forEach((item, index) => {
-  //   const _2018 = item * 4;
-  //   const _2023 = _2018 * 1.05 ** 5;
-  //   const _2028 = _2023 * 1.05 ** 5;
-  //   const _2033 = _2028 * 1.05 ** 5;
-  //   data.push({ year: '2018', p: _2018, time: index });
-  //   data.push({ year: '2023', p: _2023, time: index });
-  //   data.push({ year: '2028', p: _2028, time: index });
-  //   data.push({ year: '2033', p: _2033, time: index });
-  // });
-  // return data;
+function excute(size: number) {
+  console.time('excute');
+  return computeData(size);
 }
 
 export default function Dijkstra() {
-  function aaa() {
-    console.log(roadNet);
-    return new Promise((resolve) => {
-      computeData().then(() => resolve());
-    });
-  }
+  const [data, setData] = useState(() => option(excute(100)));
   return (
     <div>
-      <Button onClick={aaa}>计算</Button>
+      <Button onClick={() => setData(() => option(excute(100)))}>100</Button>
+      <Button onClick={() => setData(() => option(excute(1000)))}>1000</Button>
+      <Button onClick={() => setData(() => option(excute(10000)))}>
+        10000
+      </Button>
+      <ReactECharts option={data} style={{ width: '100%', height: '95vh' }} />
     </div>
   );
 }

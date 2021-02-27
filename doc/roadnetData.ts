@@ -967,7 +967,7 @@ function countDis(
   a: { x: number; y: number },
   b: { x: number; y: number } & any
 ) {
-  return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5 / 20;
+  return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5 / 50;
 }
 
 json.nodeMap = {};
