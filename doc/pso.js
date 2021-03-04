@@ -1,85 +1,156 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-redeclare */
+/* eslint-disable guard-for-in */
+/* eslint-disable block-scoped-var */
+/* eslint-disable radix */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable vars-on-top */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-var */
+var PSO = PSO || {};
 
-// import matplotlib.pyplot as plt
+PSO.Swarm = function (numParticles, numParams, options) {
+  this.numParticles = numParticles;
+  this.numParams = numParams;
 
-// // 目标函数定义
-function ras(x){
-  // todo: 填写真正的目标函数
-  const  y = 20 + x[0]**2 + x[1]**2 - 10*(np.cos(2*np.pi*x[0])+np.cos(2*np.pi*x[1]))
-  return y
-}
+  options = options || {};
+  this.min = options.min || -1;
+  this.max = options.max || 1;
+  this.velocityMultiplier = options.velocityMultiplier || 0.1;
+  this.springCoefficient = options.springCoefficient || 0.25;
+  this.bounceCoefficient = options.bounceCoefficient || 0.25;
+  this.inertia = options.inertia || 0.9;
+  this.enableJitter = options.enableJitter || false;
+  this.jitterRatio = options.jitterRatio || 0.01;
+  this.fitnessCompare =
+    options.fitnessCompare ||
+    function (a, b) {
+      return a < b;
+    };
 
-// // 参数初始化
-const w = 1.0
-const c1 = 1.49445
-const c2 = 1.49445
+  this.range = this.max - this.min;
+  this.velocityRange = this.velocityMultiplier * this.range;
+  this.numJitters = Math.ceil(this.jitterRatio * numParticles * numParams);
 
-const maxgen = 200  // // 进化次数
-const sizepop = 20  // // 种群规模
+  this.particles = new Array(numParticles);
 
-// // 粒子速度和位置的范围
-const Vmax =  1
-const Vmin = -1
-const popmax =  5
-const popmin = -5
+  for (var i = 0; i < numParticles; i++) {
+    this.particles[i] = new PSO.Particle(this);
+  }
+};
 
-// // 产生初始粒子和速度
-let pop = 5 * np.random.uniform(-1,1,(2,sizepop))
-let v = np.random.uniform(-1,1,(2,sizepop))
+PSO.Swarm.prototype = {
+  update() {
+    // Find the global best
+    var globalBest = this.particles[
+      parseInt(Math.random() * this.numParticles)
+    ];
 
-fitness = ras(pop)             // 计算适应度
-i = np.argmin(fitness)      // 找最好的个体
-gbest = pop                    // 记录个体最优位置
-zbest = pop[:,i]              // 记录群体最优位置
-fitnessgbest = fitness        // 个体最佳适应度值
-fitnesszbest = fitness[i]      // 全局最佳适应度值
+    for (var i in this.particles) {
+      if (
+        this.fitnessCompare(
+          this.particles[i].fitnessCurrent,
+          globalBest.fitnessCurrent
+        )
+      ) {
+        globalBest = this.particles[i];
+      }
+    }
 
-// 迭代寻优
-t = 0
-record = np.zeros(maxgen)
-while t < maxgen:
+    if (
+      globalBest.fitnessCurrent != null &&
+      (!this.hasHistory ||
+        this.fitnessCompare(globalBest.fitnessCurrent, this.fitnessBest))
+    ) {
+      this.hasHistory = true;
+      this.fitnessBest = globalBest.fitnessCurrent;
+      this.paramsBest = globalBest.paramsBest;
+    }
 
-    // 速度更新
-    v = w * v + c1 * np.random.random() * (gbest - pop) + c2 * np.random.random() * (zbest.reshape(2,1) - pop)
-    v[v > Vmax] = Vmax     // 限制速度
-    v[v < Vmin] = Vmin
+    // Update particles
+    for (var i in this.particles) {
+      this.particles[i].update(globalBest);
+    }
 
-    // 位置更新
-    pop = pop + 0.5 * v;
-    pop[pop > popmax] = popmax  // 限制位置
-    pop[pop < popmin] = popmin
+    // Jitter
+    if (this.enableJitter) {
+      for (var i in this.particles) {
+        var randomIndex = parseInt(Math.random() * this.numParticles);
+        this.particles[randomIndex].jitter();
+      }
+    }
+  },
+};
 
-    '''
-    // 自适应变异
-    p = np.random.random()             // 随机生成一个0~1内的数
-    if p > 0.8:                          // 如果这个数落在变异概率区间内，则进行变异处理
-        k = np.random.randint(0,2)     // 在[0,2)之间随机选一个整数
-        pop[:,k] = np.random.random()  // 在选定的位置进行变异
-    '''
+PSO.Particle = function (swarm) {
+  this.swarm = swarm;
 
-    // 计算适应度值
-    fitness = ras(pop)
+  this.fitnessCurrent = 0;
+  this.fitnessBest = 0;
+  this.hasHistory = false;
 
-    // 个体最优位置更新
-    index = fitness < fitnessgbest
-    fitnessgbest[index] = fitness[index]
-    gbest[:,index] = pop[:,index]
+  this.params = new Array(swarm.numParams);
+  this.paramsBest = new Array(swarm.numParams);
+  this.velocities = new Array(swarm.numParams);
 
-    // 群体最优更新
-    j = np.argmin(fitness)
-    if fitness[j] < fitnesszbest:
-        zbest = pop[:,j]
-        fitnesszbest = fitness[j]
+  // Initialize with parameters and velocities
+  for (var i = 0; i < swarm.numParams; i++) {
+    this.params[i] = swarm.min + Math.random() * swarm.range;
+    this.velocities[i] = swarm.velocityRange * (Math.random() - Math.random());
+  }
+};
 
-    record[t] = fitnesszbest // 记录群体最优位置的变化
+PSO.Particle.prototype = {
+  setFitness(fitness) {
+    this.fitnessCurrent = fitness;
+  },
+  update(globalBest) {
+    var { swarm } = this;
 
-    t = t + 1
+    // Save parameters if current fitness is better than historical best
+    if (
+      !this.hasHistory ||
+      swarm.fitnessCompare(this.fitnessCurrent, this.fitnessBest)
+    ) {
+      this.hasHistory = true;
+      this.fitnessBest = this.fitnessCurrent;
+      for (var i in this.params) {
+        this.paramsBest[i] = this.params[i];
+      }
+    }
 
+    for (var i in this.params) {
+      var globalDiff = globalBest.params[i] - this.params[i];
+      var localDiff = this.paramsBest[i] - this.params[i];
 
-// 结果分析
-print zbest
+      // Accelerate towards global and historical bests
+      this.velocities[i] +=
+        swarm.springCoefficient *
+        (Math.random() * globalDiff + Math.random() * localDiff);
+      this.velocities[i] *= swarm.inertia;
 
-plt.plot(record,'b-')
-plt.xlabel('generation')
-plt.ylabel('fitness')
-plt.title('fitness curve')
-plt.show()
+      this.params[i] += this.velocities[i];
+
+      // Bounce off boundaries
+      if (this.params[i] > swarm.max) {
+        this.velocities[i] +=
+          swarm.bounceCoefficient * (swarm.max - this.params[i]);
+      } else if (this.params[i] < swarm.min) {
+        this.velocities[i] +=
+          swarm.bounceCoefficient * (swarm.min - this.params[i]);
+      }
+    }
+  },
+  jitter() {
+    var { swarm } = this;
+    var randomIndex = parseInt(Math.random() * swarm.numParams);
+
+    if (Math.random() < 0.5) {
+      this.velocities[randomIndex] =
+        swarm.velocityRange * (Math.random() - Math.random());
+    } else {
+      this.params[randomIndex] = swarm.min + Math.random() * swarm.range;
+    }
+  },
+};

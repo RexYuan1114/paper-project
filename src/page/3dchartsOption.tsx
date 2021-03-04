@@ -7,7 +7,7 @@ const days = roadNet.nodes.map((node: any) => node.id);
 const option = (data: any) => ({
   tooltip: {},
   visualMap: {
-    max: data[1],
+    max: 2300,
     inRange: {
       color: [
         '#313695',
@@ -27,18 +27,22 @@ const option = (data: any) => ({
   xAxis3D: {
     type: 'category',
     data: hours,
+    name: '时间',
   },
   yAxis3D: {
     type: 'category',
     // data: nodes,
     data: days,
+    name: '节点',
   },
   zAxis3D: {
     type: 'value',
+    name: '负荷',
+    max: 2500,
   },
   grid3D: {
     boxWidth: 200,
-    boxDepth: 450,
+    boxDepth: 350,
     light: {
       main: {
         intensity: 1.2,

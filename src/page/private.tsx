@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import DataSet from '@antv/data-set';
 import { Chart, Line, Point, Tooltip, Legend, Axis, Interval } from 'bizcharts';
+import data from '../../data-2-1.json';
 
 function computeData() {
   const fs = require('fs');
@@ -93,7 +94,14 @@ const scale = {
 };
 
 function Demo() {
-  const [data, setData] = useState(computeData);
+  // console.time('excute');
+  // const data1 = computeData();
+  // const fs = require('fs');
+  // fs.writeFile(`data-${'2-1'}.json`, JSON.stringify(data1), (err: any) => {
+  //   if (err) throw err;
+  //   console.log('数据已被追加到文件');
+  // });
+  // const [data, setData] = useState(data1);
 
   // const ds = new DataSet();
   // const dv = ds

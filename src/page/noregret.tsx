@@ -1,17 +1,16 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable global-require */
 /* eslint-disable @typescript-eslint/no-loop-func */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/naming-convention */
 import React, { useState } from 'react';
 import ReactECharts from 'echarts-for-react';
-import 'echarts-gl';
-import { Button } from 'antd';
+import { Button, Row, Col } from 'antd';
 import Graph from '../../doc/dijkstra';
 import roadNet from '../../doc/roadNetData';
 import option from './3dchartsOption';
-
-// render echarts option.
-/* <ReactECharts option={this.getOption()} />; */
+import data from './data';
 
 const SOC_S_P_MAP = [2.3, 9.3, 15.3, 17.5, 16.5, 14.2, 9.7, 7.5, 4, 3.7];
 const SOC_E_P_MAP = [0, 0.1, 2, 2.2, 5.5, 7.1, 9, 17.5, 27.8, 28];
@@ -232,22 +231,13 @@ function computeData(simpleSize: number) {
   console.timeEnd('excute');
   return [res, max];
 }
-
-function excute(size: number) {
-  console.time('excute');
-  return computeData(size);
-}
-
 export default function Dijkstra() {
-  const [data, setData] = useState(() => option(excute(100)));
   return (
-    <div>
-      <Button onClick={() => setData(() => option(excute(100)))}>100</Button>
-      <Button onClick={() => setData(() => option(excute(1000)))}>1000</Button>
-      <Button onClick={() => setData(() => option(excute(10000)))}>
-        10000
-      </Button>
-      <ReactECharts option={data} style={{ width: '100%', height: '95vh' }} />
-    </div>
+    <Row>
+      <ReactECharts
+        option={option(data)}
+        style={{ width: '100%', height: '45vh' }}
+      />
+    </Row>
   );
 }

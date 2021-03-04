@@ -112,7 +112,7 @@ const json: { [props: string]: any } = {
       symbolSize: 66.66666666666667,
       x: -87.93029,
       y: -6.8120565,
-      value: 100,
+      value: 10,
       category: 1,
     },
     {
@@ -967,8 +967,15 @@ function countDis(
   a: { x: number; y: number },
   b: { x: number; y: number } & any
 ) {
-  return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5 / 50;
+  return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5 / 100;
 }
+
+json.nodes = json.nodes.map((node: any) => {
+  return {
+    ...node,
+    value: node.value ** 0.25,
+  };
+});
 
 json.nodeMap = {};
 let totalCount = 0;
@@ -1029,4 +1036,32 @@ json.areaInfo[1].case =
   json.areaInfo[0].count /
   (json.areaInfo[1].count / 3 + json.areaInfo[0].count);
 
+const map: any = [];
+const data = JSON.parse(JSON.stringify(json)).nodes.map((node: any) => {
+  let max: any = null;
+  let keys = '';
+  Object.entries(node.link).forEach((item: any, index: any) => {
+    const [key, dis] = item;
+    if (max === null) max = dis;
+    if (dis < max) {
+      max = dis;
+      keys = key;
+    }
+  });
+  if (
+    map.find((item: any) => {
+      return (
+        (item.source === keys && item.target === node.id) ||
+        (item.target === keys && item.source === node.id)
+      );
+    })
+  ) {
+    // console.log();
+  } else {
+    map.push({ source: node.id, target: keys });
+  }
+  return node;
+  // return 1;
+});
+console.log(map);
 export default json;
