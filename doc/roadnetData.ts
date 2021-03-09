@@ -960,7 +960,7 @@ const json: { [props: string]: any } = {
     { source: '76', target: '65' },
     { source: '76', target: '66' },
   ],
-  categories: [{ name: '住宅区' }, { name: '商业区' }],
+  categories: [{ name: '住宅区' }, { name: '公共区' }],
 };
 
 function countDis(

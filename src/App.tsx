@@ -9,6 +9,9 @@ import NoregretWait from './page/noregretWait';
 import Regret from './page/regret';
 import RegretWait from './page/regretWait';
 import Total from './page/total';
+import Cars from './page/carsNumber';
+import ChargersNumber from './page/chargersNumber';
+import Speed from './page/speed';
 
 const { SubMenu } = Menu;
 
@@ -28,6 +31,9 @@ export default function App2() {
               defaultOpenKeys={['sub1']}
               // mode="inline"
             >
+              <Menu.Item key="1123">
+                <Link to="/ChargersNumber">中国公共充电桩保有量</Link>
+              </Menu.Item>
               <Menu.Item key="1">
                 <Link to="/a">基于蒙特卡洛方法预测充电汽车负荷的时间分布</Link>
               </Menu.Item>
@@ -58,10 +64,16 @@ export default function App2() {
                 </Menu.ItemGroup>
               </SubMenu>
               <SubMenu key="sub3" title="粒子群优化">
-                <Menu.Item key="7" disabled>
+                <Menu.Item key="112389">
+                  <Link to="/cars">标准粒子群优化</Link>
+                </Menu.Item>
+                <Menu.Item key="4165" disabled>
                   <Link to="/PSO">标准粒子群优化</Link>
                 </Menu.Item>
-                <Menu.Item key="8" disabled>
+                <Menu.Item key="416548">
+                  <Link to="/speed">速度</Link>
+                </Menu.Item>
+                <Menu.Item key="654498" disabled>
                   <Link to="/IA-PSO">免疫粒子群优化</Link>
                 </Menu.Item>
               </SubMenu>
@@ -94,6 +106,15 @@ export default function App2() {
               </Route>
               <Route path="/IA-PSO">
                 <Total />
+              </Route>
+              <Route path="/cars">
+                <Cars />
+              </Route>
+              <Route path="/ChargersNumber">
+                <ChargersNumber />
+              </Route>
+              <Route path="/speed">
+                <Speed />
               </Route>
               <Route path="/" extra>
                 <Noregret />
