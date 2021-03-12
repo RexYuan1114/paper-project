@@ -236,7 +236,7 @@ export default function Dijkstra() {
     <Row>
       <ReactECharts
         option={option(data)}
-        style={{ width: '100%', height: '45vh' }}
+        style={{ width: '100%', height: '75vh' }}
       />
     </Row>
   );
