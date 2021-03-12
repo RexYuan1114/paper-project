@@ -61,7 +61,7 @@ export default function Dijkstra() {
       <ReactECharts
         option={{
           xAxis: {
-            name: '迭代次数',
+            name: '迭代次数/次',
             data: new Array(100)
               .fill(1)
               .map((item, index) => index + 1)
@@ -72,7 +72,7 @@ export default function Dijkstra() {
             // },
           },
           yAxis: {
-            name: '社会总成本',
+            name: '社会总成本/万元',
             min: 1500,
           },
           series: [

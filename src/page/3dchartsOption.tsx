@@ -37,7 +37,7 @@ const option = (data: any) => ({
   },
   zAxis3D: {
     type: 'value',
-    name: '负荷',
+    name: '负荷/千瓦时',
     max: 2500,
   },
   grid3D: {

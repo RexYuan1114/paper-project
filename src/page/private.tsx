@@ -81,8 +81,15 @@ function computeData() {
 }
 
 const scale = {
-  p: { min: 0 },
+  p: {
+    min: 0,
+    name: '需求',
+    formatter: (v: string) => {
+      return `${v}/辆`;
+    },
+  },
   year: {
+    position: 'top',
     formatter: (v: string) => {
       return `${v}年`;
     },
@@ -118,7 +125,7 @@ function Demo() {
     <div style={{ height: 800, width: '100%' }}>
       <Chart
         scale={scale}
-        padding={[30, 20, 60, 40]}
+        padding={[30, 60, 60, 60]}
         autoFit
         height={600}
         data={data}
@@ -139,15 +146,13 @@ function Demo() {
         /> */}
         <Axis
           name="time"
-          // label={
-          // {
-          // formatter: (text, item, index) => {
-          //   return `${text}点-${Number(text)+1}点`;
-          // },
-          // }
-          // }
+          label={{
+            formatter: (text, item, index) => {
+              return `${text}点-${Number(text) + 1}点`;
+            },
+          }}
           // title={{
-          //   position: 'center',
+          //   text: '123',
           //   style: {
           //     fontSize: 12,
           //   },

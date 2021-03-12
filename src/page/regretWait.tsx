@@ -55,7 +55,7 @@ export default function Dijkstra() {
           },
           yAxis: {
             type: 'value',
-            name: '等待时间',
+            name: '等待时间/分钟',
             max: 600,
           },
           series: [

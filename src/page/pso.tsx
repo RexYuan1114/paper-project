@@ -24,7 +24,7 @@ export default function Dijkstra() {
           },
           yAxis: {
             type: 'value',
-            name: '负荷',
+            name: '负荷/千瓦时',
           },
           series: [
             {
