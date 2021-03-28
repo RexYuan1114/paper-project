@@ -20,11 +20,11 @@ export default function Dijkstra() {
       <ReactECharts
         option={{
           xAxis: {
-            name: '年份',
+            name: '年份/年',
             data: year,
           },
           yAxis: {
-            name: '中国公共充电桩保有量（台）',
+            name: '中国公共充电桩保有量/台',
           },
           series: [
             {

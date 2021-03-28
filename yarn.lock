@@ -4852,7 +4852,7 @@ echarts-for-react@^3.0.0:
 
 echarts-gl@^2.0.2:
   version "2.0.2"
-  resolved "https://registry.npm.taobao.org/echarts-gl/download/echarts-gl-2.0.2.tgz#c09058bc3ba7ba214a8defcfd3ca1ea06078ad31"
+  resolved "http://222.222.216.74:20000/echarts-gl/-/echarts-gl-2.0.2.tgz#c09058bc3ba7ba214a8defcfd3ca1ea06078ad31"
   integrity sha1-wJBYvDunuiFKje/P08oeoGB4rTE=
   dependencies:
     claygl "^1.2.1"

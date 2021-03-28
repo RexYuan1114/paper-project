@@ -82,8 +82,15 @@ function computeData() {
 }
 
 const scale = {
-  p: { min: 0 },
+  p: {
+    min: 0,
+    name: '需求',
+    formatter: (v: string) => {
+      return `${v}/辆`;
+    },
+  },
   year: {
+    position: 'top',
     formatter: (v: string) => {
       return `${v}年`;
     },

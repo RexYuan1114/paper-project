@@ -286,7 +286,7 @@ export default function Dijkstra() {
   const [data1, setData1] = useState(() => option(excute(10000, true)));
   return (
     <Row>
-      <ReactECharts option={data1} style={{ width: '100%', height: '45vh' }} />
+      <ReactECharts option={data1} style={{ width: '100%', height: '75vh' }} />
       {/* <ReactECharts option={data1} style={{ width: '100%', height: '45vh' }} /> */}
       {/* <ReactECharts option={data1} style={{ width: '100%', height: '45vh' }} /> */}
     </Row>
