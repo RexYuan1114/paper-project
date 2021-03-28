@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import DataSet from '@antv/data-set';
 import { Chart, Line, Point, Tooltip, Legend, Axis, Interval } from 'bizcharts';
+import ReactECharts from 'echarts-for-react';
 import data from '../../data-2-1.json';
 
 function computeData() {
@@ -114,56 +115,60 @@ function Demo() {
   //     groupBy: ['year'], // 以不同产品类别为分组
   //     as: 'percent',
   //   });
+  console.log(data);
   return (
-    <div style={{ height: 800, width: '100%' }}>
-      <Chart
-        scale={scale}
-        padding={[30, 20, 60, 40]}
-        autoFit
-        height={600}
-        data={data}
-      >
-        {/* <Point position="time*p" color="year" shape="circle" /> */}
-        <Line shape="smooth" position="time*p" color="year" />
-        {/* <Interval
-          // adjust={[
-          //   {
-          //     type: 'dodge',
-          //     marginRatio: 0, // 取 0 到 1 范围的值（相对于每个柱子宽度），用于控制一个分组中柱子之间的间距
-          //     dodgeBy: 'year',
-          //   },
-          // ]}
-          adjust="symmetric"
-          position="time*p"
-          color="year"
-        /> */}
-        <Axis
-          name="time"
-          // label={
-          // {
-          // formatter: (text, item, index) => {
-          //   return `${text}点-${Number(text)+1}点`;
-          // },
-          // }
-          // }
-          // title={{
-          //   position: 'center',
-          //   style: {
-          //     fontSize: 12,
-          //   },
-          // }}
-        />
-        {/* <Tooltip shared showCrosshairs /> */}
-        {/* <Legend
-          background={{
-            padding: [5, 100, 5, 36],
-            style: {
-              fill: '#eaeaea',
-              stroke: '#fff',
+    <div>
+      <ReactECharts
+        option={{
+          padding: {
+            top: 30,
+          },
+          legend: {
+            show: true,
+            data: ['2018', '2023', '2028', '2033'],
+            textStyle: {
+              fontSize: 16,
             },
-          }}
-        /> */}
-      </Chart>
+          },
+          xAxis: {
+            type: 'category',
+            name: '时间',
+            nameTextStyle: {
+              fontSize: 16,
+            },
+            interval: 2,
+            data: new Array(24).fill(1).map((item, index) => {
+              return `${index >= 10 ? index : `0${index}`}:00`;
+            }),
+          },
+          yAxis: {
+            type: 'value',
+            nameTextStyle: {
+              fontSize: 16,
+            },
+            name: '负荷/千瓦时',
+          },
+          series: [
+            ...['2018', '2023', '2028', '2033'].map((year) => {
+              return {
+                name: year,
+                data: data
+                  .filter((item) => item.year === year)
+                  .map((item) => item.p),
+                type: 'line',
+                smooth: true,
+              };
+            }),
+            // {
+            //   // data: [...data[2]],
+            //   data,
+            //   type: 'line',
+            //   smooth: true,
+            // },
+          ],
+        }}
+        style={{ width: '100%', height: '45vh' }}
+      />
     </div>
   );
 }
